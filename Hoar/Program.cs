@@ -5,12 +5,15 @@ namespace Hoar
 {
   public class Queue
   {
+    // Конструктор и список. Очередь работает на основе динамического массива 
     private List<int> arr;
     public Queue()
     {
       this.arr = new List<int>();
     }
 
+    
+    // Проверка очереди на пустоту
     public bool empty()
     {
       if (arr.Count == 0)
@@ -18,11 +21,16 @@ namespace Hoar
       else return false;
     }
 
+    
+    // Добавление элемента в конец
     public void push(int element)
     {
       arr.Add(element);
     }
 
+    
+    // Достаём элемент и удаляем его. Два перегруженных метода.
+    // По умолчанию достаётся элемент из начала, можно указать позицию
     public int pop()
     {
       try
@@ -54,6 +62,9 @@ namespace Hoar
       }
     }
 
+    
+    // Возвращаем элемент. Два перегруженных метода.
+    // По умолчанию возвращается элемент из начала, можно указать позицию
     public int get()
     {
       return arr[0];
@@ -72,6 +83,9 @@ namespace Hoar
       return result;
     }
 
+    
+    // Устанаваливаем элемент. Два перегруженных метода.
+    // По умолчанию устанаваливается элемент из начала, можно указать позицию
     public void set(int element)
     {
       arr[0] = element;
@@ -88,29 +102,45 @@ namespace Hoar
         push(pop());
     }
 
+    
+    // Размер очереди
     public int size()
     {
       return arr.Count;
     }
   }
+  
+  
   internal class Program
   {
     public static void Main(string[] args)
     {
     }
 
+    
+    // Метод сортировки
     public Queue sort(Queue arr)
     {
       int size = arr.size();
-      Queue low = new Queue();
-      Queue high = new Queue();
-      Queue equal = new Queue();
-      Queue res = new Queue();
 
+      // Если размер больше единицы, сортируем, если нет – возвращаем очередь обратно
       if (size > 1)
       {
+        // Медианный элемент для сравнения
         int middle = arr.get(size / 2);
+        
+        // Инициализируем очереди для:
+        // 1. элементов меньше медианного,
+        // 2. элементов равных медианному,
+        // 3. элементов больше медианного,
+        // и очередь для вывода
+        Queue low = new Queue();
+        Queue equal = new Queue();
+        Queue high = new Queue();
+        Queue res = new Queue();
 
+        
+        // Заполняем три очереди
         for (int i = 0; i < size; i++)
         {
           int elem = arr.get(i);
@@ -127,10 +157,14 @@ namespace Hoar
           }
         }
 
+        
+        // Сортируем очереди
         low = sort(low);
         equal = sort(equal);
         high = sort(high);
 
+        
+        // Складываем очереди в результирующую
         for (int i = 0; i < low.size(); i++)
         {
           res.push(low.get(i));
