@@ -20,6 +20,8 @@ public:
     int Pop(int pos);          // Вытаскивание элемента по позиции
     int Get();                 // Получение элемента из начала
     int Get(int pos);          // Получение элемента по позиции
+    void Set(int value);                 // Установка элемента из начала
+    void Set(int value, int pos);          // Установка элемента по позиции
     int Size();                // Размер очереди
     void ShowAll();            // Вывод всех элементов очереди
 };
@@ -83,6 +85,18 @@ int Queue::Get(int pos) {
     return value;
 }
 
+void Queue::Set(int value) {
+    head->value = value;
+}
+
+void Queue::Set(int value, int pos) {
+    for (int i = 0; i < pos; i++) Push(Pop());
+
+    head->value = value;
+
+    for (int i = pos; i < Size(); i++) Push(Pop());
+}
+
 int Queue::Size() {
     if (Empty()) return 0;
 
@@ -105,9 +119,29 @@ void Queue::ShowAll() {
 
 
 
+
 // Метод для поиска медианного элемента
+// Выбирается медианный среди первого, последнего и среднего элементов
 int findMedian(Queue *queue) {
-    return queue->Get(queue->Size() / 2);
+    int size = queue->Size();
+    int mid = size / 2;
+
+    if (queue->Get(mid) < queue->Get()) {
+        int temp = queue->Get();
+        queue->Set(queue->Get(size / 2));
+        queue->Set(temp, size / 2);
+    }
+    if (queue->Get(size - 1) < queue->Get()) {
+        int temp = queue->Get();
+        queue->Set(queue->Get(size - 1));
+        queue->Set(temp, size - 1);
+    }
+    if (queue->Get(mid) < queue->Get(size - 1)) {
+        int temp = queue->Get(size - 1);
+        queue->Set(queue->Get(size / 2), size - 1);
+        queue->Set(temp, size / 2);
+    }
+    return queue->Get(size - 1);
 }
 
 // Метод сортировки по Хоару
@@ -117,23 +151,23 @@ Queue Sort(Queue *queue) {
     if (size <= 1) return *queue;
     else {
         // Медианный элемент для сравнения
-        int median = findMedian(queue);
+        int pivot = findMedian(queue);
 
         // Инициализируем очереди для:
         // 1. элементов меньше медианного,
         // 2. элементов равных медианному,
         // 3. элементов больше медианного,
         // и очередь для вывода
-        auto *low = new(Queue);
+        auto *low   = new(Queue);
         auto *equal = new(Queue);
-        auto *high = new(Queue);
-        auto *res = new(Queue);
+        auto *high  = new(Queue);
+        auto *res   = new(Queue);
 
         // Заполняем три очереди
         for (int i = 0; i < size; i++) {
             int elem = queue->Get(i);
-            if (elem < median) low->Push(elem);
-            else if (elem > median) high->Push(elem);
+            if (elem < pivot) low->Push(elem);
+            else if (elem > pivot) high->Push(elem);
             else equal->Push(elem);
         }
 
@@ -142,13 +176,16 @@ Queue Sort(Queue *queue) {
         *high = Sort(high);
 
         // Складываем очереди в результирующую
-        for (int i = 0; i < low->Size(); i++)   res->Push(low->Get(i));
+        for (int i = 0; i < low->Size();   i++) res->Push(low->Get(i));
         for (int i = 0; i < equal->Size(); i++) res->Push(equal->Get(i));
-        for (int i = 0; i < high->Size(); i++)  res->Push(high->Get(i));
+        for (int i = 0; i < high->Size();  i++) res->Push(high->Get(i));
 
         return *res;
     }
 }
+
+
+
 
 int main() {
     auto *q = new(Queue);
