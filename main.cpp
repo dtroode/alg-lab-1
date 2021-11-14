@@ -16,11 +16,12 @@ private:
     };
     // Голова: будет указателем на первый элемент
     queue *head;
+    queue *tail;
 
 public:
     Queue();                      // Конструктор
     ~Queue();                     // Деструктор
-    bool isEmpty();               // Проверка на пустоту
+    bool IsEmpty();               // Проверка на пустоту
     void Push(int value);         // Добавление элемента в конец
     int Pop();                    // Вытаскивание элемента из начала
     int Pop(int pos);             // Вытаскивание элемента по позиции
@@ -39,6 +40,7 @@ public:
 Queue::Queue()
 {
     head = nullptr;
+    tail = nullptr;
 }
 
 /*
@@ -52,13 +54,14 @@ Queue::~Queue()
     while (head != nullptr)
         head = head->next;
     delete head;
+    delete tail;
 }
 
 /*
  * Проверка на пустоту
  * Если голова указывает на NULL, то очередь пуста.
 */
-bool Queue::isEmpty()
+bool Queue::IsEmpty()
 {
     return head == nullptr;
 }
@@ -69,31 +72,31 @@ bool Queue::isEmpty()
  * 2. Если голова указывает на NULL, то ставим указатель на новый элемент.
  * 3. Если есть первый элемент, то идём до последнего элемента
  *    и ставим указатель next на новый элемент.
-*/
+ */
 void Queue::Push(int value)
 {
     auto *temp = new (queue);
     temp->value = value;
     temp->next = nullptr;
 
-    if (head == nullptr)
+    if (head == nullptr) {
         head = temp;
+        tail = head;
+    }
     else
     {
-        queue *last = head;
-        while (last->next != nullptr)
-            last = last->next;
-        last->next = temp;
+        tail->next = temp;
+        tail = tail->next;
     }
 }
 
 /*
  * Вытаскиваем первый элемент
  * Получаем его значение и сдвигаем указатель головы.
-*/
+ */
 int Queue::Pop()
 {
-    if (isEmpty())
+    if (IsEmpty())
         return -1;
 
     int value = head->value;
@@ -108,10 +111,10 @@ int Queue::Pop()
  *    что нужный элемент становится первым.
  * 2. Вытаскиваем нужный элемент.
  * 3. Прокручиваем очередь на оставшееся количество символов, чтоб вернуть в прежнее состояние.
-*/
+ */
 int Queue::Pop(int pos)
 {
-    if (isEmpty())
+    if (IsEmpty())
         return -1;
 
     for (int i = 0; i < pos; i++)
@@ -126,10 +129,10 @@ int Queue::Pop(int pos)
 
 /*
  * Получаем значение первого элемента
-*/
+ */
 int Queue::Get()
 {
-    if (isEmpty())
+    if (IsEmpty())
         return -1;
 
     return head->value;
@@ -142,10 +145,10 @@ int Queue::Get()
  *    что нужный элемент становится первым.
  * 2. Получаем значение нужного элемента.
  * 3. Прокручиваем очередь на оставшееся количество символов, чтоб вернуть в прежнее состояние.
-*/
+ */
 int Queue::Get(int pos)
 {
-    if (isEmpty())
+    if (IsEmpty())
         return -1;
 
     for (int i = 0; i < pos; i++)
@@ -193,14 +196,14 @@ void Queue::Set(int value, int pos)
  */
 int Queue::Size()
 {
-    if (isEmpty())
+    if (IsEmpty())
         return 0;
 
-    queue *last = head;
+    queue *current = head;
     int size = 1;
-    while (last->next != nullptr)
+    while (current->next != nullptr)
     {
-        last = last->next;
+        current = current->next;
         size++;
     }
 
@@ -209,13 +212,20 @@ int Queue::Size()
 
 /*
  * Вывод всех элементов
+ * Временный указатель указывает на голову,
+ * выводит её и смещается, выводя все элементы.
  */
 void Queue::ShowAll()
 {
-    for (int i = 0; i < Size(); i++)
-    {
-        std::cout << Get(i) << std::endl;
+    if (IsEmpty())
+        cout << "Очередь пуста" << endl;
+
+    queue *temp = head;
+    while(temp) {
+        cout << temp->value << " ";
+        temp = temp->next;
     }
+    cout << endl;
 }
 
 
@@ -311,25 +321,5 @@ Queue Sort(Queue *queue)
 
 int main()
 {
-    auto *q = new (Queue);
-    q->Push(5);
-    q->Push(5);
-    q->Push(-1);
-    q->Push(6);
-    q->Push(2);
-    q->Push(8);
-    q->Push(1);
-    q->Push(15);
-    q->Push(100);
-    q->Push(5);
-    q->Push(2);
-    q->Push(-5);
-    q->Push(5);
-    q->Push(81);
-    std::cout << q->Get() << std::endl;
-    q->Get(5);
-    std::cout << q->Get() << std::endl;
-//    Queue res = Sort(q);
-//    res.ShowAll();
     return 0;
 }
