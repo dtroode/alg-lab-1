@@ -54,7 +54,6 @@ Queue::~Queue()
     while (head != nullptr)
         head = head->next;
     delete head;
-    delete tail;
 }
 
 /*
@@ -183,7 +182,7 @@ void Queue::Set(int value, int pos)
     for (int i = 0; i < pos; i++)
         Push(Pop());
 
-    head->value = value;
+    Set(value);
 
     for (int i = pos; i < Size(); i++)
         Push(Pop());
@@ -299,6 +298,8 @@ Queue Sort(Queue *queue)
             else
                 equal->Push(elem);
         }
+
+
 
         // Сортируем очереди
         *low = Sort(low);
