@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-// Структутра класса очереди
+
 class Queue
 {
 private:
@@ -14,23 +14,23 @@ private:
         int value;
         queue *next;
     };
-    // Голова и хвост: будут указателями на первый и последний элементы
+    
     queue *head;
     queue *tail;
 
 public:
-    Queue();                      // Конструктор
-    ~Queue();                     // Деструктор
-    bool IsEmpty();               // Проверка на пустоту
-    void Push(int value);         // Добавление элемента в конец
-    int Pop();                    // Вытаскивание элемента из начала
-    int Pop(int pos);             // Вытаскивание элемента по позиции
-    int Get();                    // Получение элемента из начала
-    int Get(int pos);             // Получение элемента по позиции
-    void Set(int value);          // Установка элемента из начала
-    void Set(int value, int pos); // Установка элемента по позиции
-    int Size();                   // Размер очереди
-    void ShowAll();               // Вывод всех элементов очереди
+    Queue();                      
+    ~Queue();                     
+    bool IsEmpty();               
+    void Push(int value);         
+    int Pop();                    
+    int Pop(int pos);             
+    int Get();                    
+    int Get(int pos);             
+    void Set(int value);          
+    void Set(int value, int pos); 
+    int Size();                   
+    void ShowAll();               
 };
 
 /*
@@ -39,7 +39,7 @@ public:
 */
 Queue::Queue()
 {
-    head = nullptr;
+    head = nullptr;   
     tail = nullptr;
 }
 
@@ -54,6 +54,7 @@ Queue::~Queue()
     while (head != nullptr)
         head = head->next;
     delete head;
+    delete tail;
 }
 
 /*
@@ -182,7 +183,7 @@ void Queue::Set(int value, int pos)
     for (int i = 0; i < pos; i++)
         Push(Pop());
 
-    Set(value);
+    head->value = value;
 
     for (int i = pos; i < Size(); i++)
         Push(Pop());
@@ -239,27 +240,23 @@ int findMedian(Queue *queue)
     int size = queue->Size();
     int mid = size / 2;
 
-    int first = queue->Get();
-    int middle = queue->Get(mid);
-    int last = queue->Get(size - 1);
-
-    if (middle < first);
+    if (queue->Get(mid) < queue->Get())
     {
-        int temp = first;
-        queue->Set(middle);
-        queue->Set(temp, mid);
+        int temp = queue->Get();
+        queue->Set(queue->Get(size / 2));
+        queue->Set(temp, size / 2);
     }
-    if (last < first);
+    if (queue->Get(size - 1) < queue->Get())
     {
-        int temp = first;
-        queue->Set(last);
+        int temp = queue->Get();
+        queue->Set(queue->Get(size - 1));
         queue->Set(temp, size - 1);
     }
-    if (middle < last);
+    if (queue->Get(mid) < queue->Get(size - 1))
     {
-        int temp = last;
-        queue->Set(middle, size - 1);
-        queue->Set(temp, mid);
+        int temp = queue->Get(size - 1);
+        queue->Set(queue->Get(size / 2), size - 1);
+        queue->Set(temp, size / 2);
     }
     return queue->Get(size - 1);
 }
@@ -267,7 +264,7 @@ int findMedian(Queue *queue)
 
 
 
-// Метод сортировки по Хоару
+
 Queue Sort(Queue *queue)
 {
     int size = queue->Size();
@@ -276,7 +273,7 @@ Queue Sort(Queue *queue)
         return *queue;
     else
     {
-        // Медианный элемент для сравнения
+        
         int pivot = findMedian(queue);
 
         /*
@@ -291,7 +288,7 @@ Queue Sort(Queue *queue)
         auto *high = new (Queue);
         auto *res = new (Queue);
 
-        // Заполняем три очереди
+        
         for (int i = 0; i < size; i++)
         {
             int elem = queue->Get(i);
@@ -303,13 +300,11 @@ Queue Sort(Queue *queue)
                 equal->Push(elem);
         }
 
-
-
-        // Сортируем очереди
+        
         *low = Sort(low);
         *high = Sort(high);
 
-        // Складываем очереди в результирующую
+        
         for (int i = 0; i < low->Size(); i++)
             res->Push(low->Get(i));
         for (int i = 0; i < equal->Size(); i++)
@@ -326,5 +321,25 @@ Queue Sort(Queue *queue)
 
 int main()
 {
+    auto *q = new (Queue);
+    q->Push(5);
+    q->Push(5);
+    q->Push(-1);
+    q->Push(6);
+    q->Push(2);
+    q->Push(8);
+    q->Push(1);
+    q->Push(15);
+    q->Push(100);
+    q->Push(5);
+    q->Push(2);
+    q->Push(-5);
+    q->Push(5);
+    q->Push(81);
+
+
+
+    Queue res = Sort(q);
+    res.ShowAll();
     return 0;
 }
